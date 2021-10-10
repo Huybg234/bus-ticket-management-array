@@ -48,14 +48,6 @@ public class Passenger extends Person{
         return ORDINARY_GUEST;
     }
 
-    public static int getAutoId() {
-        return AUTO_ID;
-    }
-
-    public static void setAutoId(int autoId) {
-        AUTO_ID = autoId;
-    }
-
     public void inputInfo(){
         this.setId(Passenger.AUTO_ID);
         super.inputInfo();

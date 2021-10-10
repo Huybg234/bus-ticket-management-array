@@ -58,14 +58,6 @@ public class Ticket {
         return INTERLINE;
     }
 
-    public static int getAutoId() {
-        return AUTO_ID;
-    }
-
-    public static void setAutoId(int autoId) {
-        AUTO_ID = autoId;
-    }
-
     public void inputTicketInfo(){
         this.setId(Ticket.AUTO_ID);
         System.out.println("Nhập mô tả: ");
