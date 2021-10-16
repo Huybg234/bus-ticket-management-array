@@ -131,82 +131,126 @@ public class MainRun {
     }
 
     private static void ticketSaleList() {
+        boolean check = true;
         if (!isValidPassengerAndTicket()) {
             System.out.println("Bạn cần nhập hành khách và vé trước khi thống kê! ");
             return;
         }
         ticketSales = new TicketSale[countPassenger];
         float sumPrice;
-        for (int i = 0; i < passengers.length; i++) {
-            sumPrice = 0;
+        int passengerId;
+        Passenger passenger;
+        int n = 0;
+        do {
+            try {
+                System.out.println("Nhập số lượng hành khách muốn mua vé: ");
+                n = new Scanner(System.in).nextInt();
+                check = true;
+            } catch (Exception e) {
+                System.out.print("Không được nhập ký tự khác ngoài số! Nhập lại: ");
+                check = false;
+                continue;
+            }
+            if (n <= 0){
+                System.out.println("Số lượng hành khách muốn mua vé phải lớn hơn 0! Nhập lại: ");
+                check = false;
+            }
+        }while (!check);
+        for (int i = 0; i < n; i++) {
+            Ticket[] ticketList;
             int count = 0;
-            System.out.println("Thống kê cho hành khách " + passengers[i].getName());
-            System.out.println("Nhập số loại vé mà hành khách " + passengers[i].getName() + " muốn mua: ");
-            int ticketTypeNumber = 0;
-            boolean check = true;
             do {
                 try {
-                    ticketTypeNumber = new Scanner(System.in).nextInt();
+                    System.out.println("Nhập id hành khách muốn mua vé: ");
+                    passengerId = new Scanner(System.in).nextInt();
                     check = true;
-                } catch (Exception e) {
-                    System.out.println("Không được nhập ký tự khác ngoài số! Nhập lại: ");
+                }catch (Exception e) {
+                    System.out.print("Không được nhập ký tự khác ngoài số! Nhập lại: ");
                     check = false;
                     continue;
                 }
-                if (ticketTypeNumber <= 0 || ticketTypeNumber > tickets.length) {
-                    System.out.print("Số loại vé khách muốn mua phải lớn hơn 0 và nhỏ hơn tổng loại vé! Nhập lại: ");
-                    check = false;
-                }
-            } while (!check);
-            Ticket[] ticketList = new Ticket[ticketTypeNumber];
-            float price;
-            for (int j = 0; j < ticketTypeNumber; j++) {
-                price = 0;
-                System.out.println("Nhập id của loại vé thứ " + (j + 1) + " mà khách hàng " + passengers[i].getName() + " muốn mua");
-                int tmpId;
-                do {
-                    try {
-                        tmpId = new Scanner(System.in).nextInt();
-                        check = true;
-                    } catch (Exception e) {
-                        System.out.println("Không được nhập ký tự khác ngoài số! Nhập lại: ");
-                        check = false;
-                        continue;
-                    }
-                    Ticket ticket = searchTicket(tmpId);
-                    int total = 0;
-                    if (ticket != null) {
-                        System.out.println("Nhập số lượng vé hành khách muốn mua của loại vé " + ticket.getDescription());
+                passenger =searchPassenger(passengerId);
+                if (passenger!=null){
+                    sumPrice = 0;
+                    System.out.println("Thống kê cho hành khách " + passenger.getName());
+                    System.out.println("Nhập số loại vé mà hành khách " + passenger.getName() + " muốn mua: ");
+                    int ticketTypeNumber = 0;
+                    do {
+                        try {
+                            ticketTypeNumber = new Scanner(System.in).nextInt();
+                            check = true;
+                        } catch (Exception e) {
+                            System.out.println("Không được nhập ký tự khác ngoài số! Nhập lại: ");
+                            check = false;
+                            continue;
+                        }
+                        if (ticketTypeNumber <= 0 || ticketTypeNumber > tickets.length) {
+                            System.out.print("Số loại vé khách muốn mua phải lớn hơn 0 và nhỏ hơn tổng loại vé! Nhập lại: ");
+                            check = false;
+                        }
+                    } while (!check);
+                    ticketList = new Ticket[ticketTypeNumber];
+                    float price;
+                    for (int j = 0; j < ticketTypeNumber; j++) {
+                        price = 0;
+                        System.out.println("Nhập id của loại vé thứ " + (j + 1) + " mà khách hàng " + passenger.getName() + " muốn mua");
+                        int tmpId;
                         do {
                             try {
-                                total = new Scanner(System.in).nextInt();
+                                tmpId = new Scanner(System.in).nextInt();
                                 check = true;
                             } catch (Exception e) {
                                 System.out.println("Không được nhập ký tự khác ngoài số! Nhập lại: ");
                                 check = false;
                                 continue;
                             }
-                            if (total != 1) {
-                                System.out.println("Số lượng vé mua 1 loại không lớn hơn 1! nhập lại: ");
-                                check = false;
+                            Ticket ticket = searchTicket(tmpId);
+                            int total = 0;
+                            if (ticket != null) {
+                                System.out.println("Nhập số lượng vé hành khách muốn mua của loại vé " + ticket.getDescription());
+                                do {
+                                    try {
+                                        total = new Scanner(System.in).nextInt();
+                                        check = true;
+                                    } catch (Exception e) {
+                                        System.out.println("Không được nhập ký tự khác ngoài số! Nhập lại: ");
+                                        check = false;
+                                        continue;
+                                    }
+                                    if (total != 1) {
+                                        System.out.println("Số lượng vé mua 1 loại không lớn hơn 1! nhập lại: ");
+                                        check = false;
+                                    }
+                                } while (!check);
+                                price = total*tickets[j].getPrice();
+                                sumPrice += price;
+                                ticketList[j] = ticket;
+                                count++;
+                                break;
                             }
-                        } while (!check);
-                        price = total*tickets[j].getPrice();
-                        sumPrice += price;
-                        ticketList[j] = ticket;
-                        count++;
-                        break;
+                            System.out.print("Không có vé nào có ID vừa nhập, vui lòng nhập lại: ");
+                        } while (true);
                     }
-                    System.out.print("Không có vé nào có ID vừa nhập, vui lòng nhập lại: ");
-                } while (true);
-            }
-            TicketSale ticketSale = new TicketSale(passengers[i],ticketList,count);
+                    break;
+                }
+                System.out.print("Không có vé nào có ID vừa nhập, vui lòng nhập lại: ");
+            }while (true);
+            TicketSale ticketSale = new TicketSale(passenger,ticketList,count);
             ticketSales[i] = ticketSale;
             ticketSales[i].setTicketPrice(sumPrice);
         }
         for (TicketSale ticketSale: ticketSales){
             System.out.println(ticketSale);
         }
+    }
+
+    private static Passenger searchPassenger(int passengerId) {
+        for (Passenger passenger : passengers){
+            if (passenger.getId() == passengerId){
+                return  passenger;
+            }
+        }
+        return null;
     }
 
     private static Ticket searchTicket(int tmpId) {
